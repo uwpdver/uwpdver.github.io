@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/page/login/style.css"],"names":[],"mappings":"AAAA,mBACE,uDACF","file":"6.e51e6f20.chunk.css","sourcesContent":[".login-page header {\n  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);\n}"]}
