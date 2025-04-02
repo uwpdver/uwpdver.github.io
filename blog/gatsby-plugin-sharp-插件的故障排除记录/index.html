@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/gatsby-plugin-sharp-%E6%8F%92%E4%BB%B6%E7%9A%84%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E8%AE%B0%E5%BD%95/"><!-- Primary Meta Tags --><title>gatsby-plugin-sharp 插件的故障排除记录 | 刘志豪的QQ空间</title><meta name="title" content="gatsby-plugin-sharp 插件的故障排除记录 | 刘志豪的QQ空间"><meta name="description" content="npm 的依赖问题再次困扰着我，我把它记录下来，吸取教训，希望 npm 早日被更好的工具取代。这次的问题是 gatsby 的插件版本与 gatsby4.0.2 不兼容导致的，升级插件版本就解决了。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/gatsby-plugin-sharp-%E6%8F%92%E4%BB%B6%E7%9A%84%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E8%AE%B0%E5%BD%95/"><meta property="og:title" content="gatsby-plugin-sharp 插件的故障排除记录 | 刘志豪的QQ空间"><meta property="og:description" content="npm 的依赖问题再次困扰着我，我把它记录下来，吸取教训，希望 npm 早日被更好的工具取代。这次的问题是 gatsby 的插件版本与 gatsby4.0.2 不兼容导致的，升级插件版本就解决了。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/gatsby-plugin-sharp-%E6%8F%92%E4%BB%B6%E7%9A%84%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E8%AE%B0%E5%BD%95/"><meta property="twitter:title" content="gatsby-plugin-sharp 插件的故障排除记录 | 刘志豪的QQ空间"><meta property="twitter:description" content="npm 的依赖问题再次困扰着我，我把它记录下来，吸取教训，希望 npm 早日被更好的工具取代。这次的问题是 gatsby 的插件版本与 gatsby4.0.2 不兼容导致的，升级插件版本就解决了。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-31T08:06:00.000Z"> Oct 31, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> gatsby-plugin-sharp 插件的故障排除记录 </div> </div> <article class="animate"> <p>我又花费了大概 6 个小时去解决去解决 npm 的报错，我真的对 npm 深恶痛绝。</p>
+<p>昨天我在装修我的博客，给博客的关于页面填充更多的信息，其中有一个展示技术栈的章节，我给每个技术的名字前面增加它们对应的图标。要搞清楚怎么用 Gatsby 的方式使用图片也是一件很麻烦的事情，这里就不细说，总之我弄了一个白天，终于把关于页面做好了。</p>
+<p>提交代码等待 cloudflare page 自动部署成功。结果过了很久还没有更新好，上 cloudflare page 一看，构建过程出错了。错误信息是 <code>Gatsby-plugin-sharp wasn't setup correctly in gatsby-config.js. Make sure you add it to the plugins array</code>。字面意思就是 <code>Gatsby-plugin-sharp</code> 没有正确地设置在 <code>gatsby-config.js</code>文件中。我检查了一下发现是按照正确的方式设置的，在本地运行了构建脚本之后发现本地也有同样的问题。于是我开始用搜索寻找解决的办法，有的回答说是没有安装 <code>Gatsby-plugin-sharp</code> 这个包，但是我是安装了的。还有的回答说要清理 npm 的缓存。我也试过了，没用。中间尝试了各种方法，包括但不限于：</p>
+<ol>
+<li>
+<p>删除 node_module 目录，重新安装依赖，无法安装成功。</p>
+</li>
+<li>
+<p>切换 npm 源为淘宝源，使用 npm 重新安装依赖，依然无法安装成功。</p>
+</li>
+<li>
+<p>使用 cnpm 安装依赖，结果找不到对应的版本的包。</p>
+</li>
+<li>
+<p>单独安装 <code>gatsby-plugin-sharp</code>，<code>gatsby-plugin-sharp</code> 版本更新了，但依然无法构建成功。</p>
+</li>
+<li>
+<p>git 回滚到更新 <code>gatsby-plugin-sharp</code> 之前的版本，重新安装依赖，依然无法安装成功。</p>
+</li>
+<li>
+<p>使用 yarn 安装依赖，在安装 sharp 这个包时结果提示找不到 python</p>
+<ol>
+<li>安装了 python，又提示需要  visual stdio。</li>
+<li>安装了 visual stido，又提示缺少 C++ 核心组件，但是 C++ 核心组件体积太大了，而且之前也不需要安装这些东西也可以成功，于是没有在这条路上走下去。</li>
+<li>因为是安装 sharp 这个库出现的问题，于是单独安装 sharp，每次都失败，错误信息是 <code>Something went wrong installing the "sharp" module</code>。</li>
+<li>去 sharp 的官方文档中，看到了关于安装失败的建议，就是切换淘宝源，切换之后安装 sharp 成功了，但是 <code>gatsby build</code>还失败，并且是和上一步相同的错误信息。</li>
+<li>继续搜索安装 sharp 的错误，看到 <code>gatsby-plugin-sharp</code> 的<a href="https://www.gatsbyjs.com/plugins/gatsby-plugin-sharp/#troubleshooting">官方文档</a>中的故障排除，发现有可能是依赖 sharp 的包版本与 <code>Gatsby 4.x</code> 版本不兼容，需要更新。通过 <code>yarn why sharp</code> 命令查看有哪些包依赖 sharp，然后逐个将这些包升级到最新版本，运行 <code>gatsby build</code> 命令验证。结果还是出现和之前一样的报错。</li>
+<li>执行 <code>yarn why sharp</code> 命令查看当前已安装的 sharp 的版本是否与依赖 sharp 的包所需的版本一致，检查之后发现差了 0.0.1 个版本号。又发现 sharp 被添加到了当前项目的依赖中，于是通过 <code>yarn remove sharp</code> 命令将当前的 sharp 移除。运行 <code>gatsby build</code> 命令验证。结果构建成功。</li>
+</ol>
+<h3 id="结论">结论</h3>
+<p>最终的原因就是<strong>当前安装的 gatsby 插件版本与当前安装的 gatsby 版本不兼容</strong>，解决方案就是<strong>找到报错相关的插件，更新它们</strong>。但是根据 npm 给出的报错信息，我根本找不到问题的原因，所以走了很多弯路。</p>
+<p>这次得到的教训就是：出了问题要思考自己在出错前做了什么改动。就像我昨天更新了一个很重要的包，它的插件没有更新，所以它们不兼容，导致了问题。而且要善用 git，每次小步改动，验证，提交。这样有助于从问题中恢复，以及定位问题。</p>
+<p>本来这次的踩坑记录是想写的非常规范化的，记录下每一个猜想，行动，结果，问题。按照顺序将这些内容填充。但是由于过了太久很多过程都忘记了，所以就做罢了。以后排查和解决问题的时候可以尝试用那种模式，一边记录一边排查。</p>
+</li>
+</ol> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/javascript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/"><!-- Primary Meta Tags --><title>JavaScript面向对象——创建对象和原型 | 刘志豪的QQ空间</title><meta name="title" content="JavaScript面向对象——创建对象和原型 | 刘志豪的QQ空间"><meta name="description" content="本文是阅读《JavaScript 高级程序设计》面向对象的程序设计一章的笔记，记录了一些知识要点和示例代码。主要内容是 JavaScript 中的创建对象相关的知识。其中包括：对象的属性，创建单个对象的方式，创建多个对象的方式，理解原型对象，等等。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/javascript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/"><meta property="og:title" content="JavaScript面向对象——创建对象和原型 | 刘志豪的QQ空间"><meta property="og:description" content="本文是阅读《JavaScript 高级程序设计》面向对象的程序设计一章的笔记，记录了一些知识要点和示例代码。主要内容是 JavaScript 中的创建对象相关的知识。其中包括：对象的属性，创建单个对象的方式，创建多个对象的方式，理解原型对象，等等。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/javascript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/"><meta property="twitter:title" content="JavaScript面向对象——创建对象和原型 | 刘志豪的QQ空间"><meta property="twitter:description" content="本文是阅读《JavaScript 高级程序设计》面向对象的程序设计一章的笔记，记录了一些知识要点和示例代码。主要内容是 JavaScript 中的创建对象相关的知识。其中包括：对象的属性，创建单个对象的方式，创建多个对象的方式，理解原型对象，等等。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-11-05T15:59:00.000Z"> Nov 5, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 4 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> JavaScript面向对象——创建对象和原型 </div> </div> <article class="animate"> <h2 id="对象的属性">对象的属性</h2>
+<p>属性两种类型</p>
+<ol>
+<li>数据属性</li>
+<li>访问器属性</li>
+</ol>
+<p>四个属性特征</p>
+<ul>
+<li><code>[[Configurable]]</code>：可配置性，能否用 delete 删除，以及能否修改属性的特征值</li>
+<li><code>[[Enumerable]]</code>：可枚举型性，能否用 for in 枚举</li>
+<li><code>[[Writable]]</code>：可写性，能否修改该属性的值</li>
+<li><code>[[Value]]</code>：保存属性的值，属性从这里读取，新的值替代这个位置的值</li>
+</ul>
+<p>Object.defineProperty() 设置属性的特性</p>
+<p>访问器属性</p>
+<ul>
+<li><code>[[Set]]</code></li>
+<li><code>[[Get]]</code></li>
+</ul>
+<p>Object.getOwnPropertyDescriptor() 获取属性的特性</p>
+<h2 id="创建对象的方式">创建对象的方式</h2>
+<p>方式 1——new Object</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> obj1 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Object</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">obj1.a </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'to'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">obj1.b </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'be'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">obj1.c </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'or'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(obj1);</span></span>
+<span class="line"></span></code></pre>
+<p>方式 2——字面量</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> obj2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  a: </span><span style="color:#9ECBFF">'to'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  b: </span><span style="color:#9ECBFF">'be'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  c: </span><span style="color:#9ECBFF">'or'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(obj2);</span></span>
+<span class="line"></span></code></pre>
+<h2 id="创建多个对象的方式">创建多个对象的方式</h2>
+<h3 id="工厂模式">工厂模式</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> createPerson</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">  var</span><span style="color:#E1E4E8"> obj </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Object</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  obj.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#E1E4E8">  obj.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> age;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> obj;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> jojo </span><span style="color:#F97583">=</span><span style="color:#B392F0"> createPerson</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jojo'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">17</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(jojo);</span></span>
+<span class="line"></span></code></pre>
+<p>通过工厂函数，创建对象，为对象添加属性，然后返回对象。</p>
+<h4 id="改进">改进</h4>
+<p>可以方便地创建多个有相同属性的对象。</p>
+<h4 id="问题">问题</h4>
+<p>无法辨识类型，方法无法复用，没有共享属性。</p>
+<h3 id="构造函数模式">构造函数模式</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agel</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">sayName</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> jojo </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jojo'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">17</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> dio </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'dio'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">jojo.</span><span style="color:#B392F0">sayName</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 'jojo'</span></span>
+<span class="line"><span style="color:#E1E4E8">dio.</span><span style="color:#B392F0">sayName</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 'dio'</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(jojo instance Person) </span><span style="color:#6A737D">// true</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(dio instance Person) </span><span style="color:#6A737D">// true</span></span>
+<span class="line"></span></code></pre>
+<p>要创建 Person 的新实例，必须使用 new 操作符。以这种方式调用构造函数实际上会经历以下 4 个步骤：</p>
+<ol>
+<li>
+<p>创建一个新对象；</p>
+</li>
+<li>
+<p>将构造函数的作用域赋给新对象（因此this就指向了这个新对象）；</p>
+</li>
+<li>
+<p>执行构造函数中的代码（为这个新对象添加属性）；</p>
+</li>
+<li>
+<p>返回新对象。</p>
+</li>
+</ol>
+<h4 id="问题-1">问题</h4>
+<p>相同类的实例<strong>没有共享方法</strong>，每个实例都会创建一个新的函数，即使所有的实例的函数的作用都是一样的。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(dio.sayName </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> jojo.sayName) </span><span style="color:#6A737D">// false</span></span>
+<span class="line"></span></code></pre>
+<h4 id="解决方法">解决方法</h4>
+<p>将方法提取到外部定义，构造函数内只将外部的函数赋值给 this 的属性。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> sayName</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agel</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.sayName </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> sayName</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span></code></pre>
+<h4 id="问题-2">问题</h4>
+<p>定义在全局的方法只能由实例内部调用，不够内聚。</p>
+<h3 id="原型模式">原型模式</h3>
+<p>我们创建的每个函数都有一个prototype（原型）属性，这个属性是一个指针，指向一个对象，而这个对象的用途是包含可以<strong>由特定类型的所有实例共享</strong>的属性和方法。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'jojo'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 17</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.friends </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'dio'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Bob'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">sayName</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person1 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person2 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">person1.</span><span style="color:#B392F0">sayName</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// jojo</span></span>
+<span class="line"><span style="color:#E1E4E8">person2.</span><span style="color:#B392F0">sayName</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// jojo</span></span>
+<span class="line"></span></code></pre>
+<h3 id="理解原型对象">理解原型对象</h3>
+<h4 id="构造函数与其原型对象之间的联系">构造函数与其原型对象之间的联系</h4>
+<p>无论什么时候，只要创建了一个新函数，就会根据一组特定的规则为该函数创建一个 <code>prototype</code> 属性，这个属性指向函数的原型对象。在默认情况下，所有原型对象都会都会自动获得一个 <code>constructor</code>（构造函数）属性，这个属性包含一个指向 <code>prototype</code> 属性所在函数的指针。就拿前面的例子来说，<code>Person.prototype.constructor</code> 指向 <code>Person</code>。而通过这个构造函数，我们还可继续为原型对象添加其他属性和方法。</p>
+<h4 id="实例与构造函数的原型对象之间的的联系">实例与构造函数的原型对象之间的的联系</h4>
+<p>当调用构造函数创建一个新实例后，该实例的内部将包含一个指针（内部属性）<code>[[Prototype]]</code>，指向构造函数的原型对象。这个连接存在于<strong>实例</strong>与<strong>构造函数的原型对象</strong>之间，而不是存在于实例与构造函数之间。</p>
+<h4 id="对象属性的查找过程">对象属性的查找过程</h4>
+<p>每当代码读取某个对象的某个属性时，都会执行一次搜索，目标是具有给定名字的属性。搜索首先从对象实例本身开始。如果在实例中找到了具有给定名字的属性，则返回该属性的值；如果没有找到，则继续搜索指针指向的原型对象，在原型对象中查找具有给定名字的属性。如果在原型对象中找到了这个属性，则返回该属性的值。</p>
+<p>由于在原型中查找值的过程是一次搜索，因此我们对原型对象所做的任何修改都能够立即从实例上反映出来——即使是先创建了实例后修改原型也照样如此。</p>
+<p>如果我们在实例中添加了一个属性，而该属性与实例原型中的一个属性同名，那我们就在实例中创建该属性，该属性将会屏蔽原型中的那个属性。</p>
+<p>不过，使用 <code>delete</code> 操作符则可以完全删除实例属性，从而让我们能够重新访问原型中的属性，如下所示。</p>
+<p>原型模式的问题：举例——共享的引用类型，对原型上的一个引用类型修改，会反应在所有实例上</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 17</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jojo'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// for in 可以遍历对象所有可枚举的属性，包括原型对象上的属性  </span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> key </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> person){</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 控制台输出: </span></span>
+<span class="line"><span style="color:#6A737D">// name</span></span>
+<span class="line"><span style="color:#6A737D">// age</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// hasOwnProperty 对存在于实例中的属性返回 true，否则返回 false</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> key </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> person){</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8">(person.</span><span style="color:#B392F0">hasOwnProperty</span><span style="color:#E1E4E8">(key)){</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 控制台输出: </span></span>
+<span class="line"><span style="color:#6A737D">// name</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Object.getOwnPropertyNames 可以获得所有的属性名，无论属性是否可枚举。</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(Object.</span><span style="color:#B392F0">getOwnPropertyNames</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#6A737D">// 控制台输出：</span></span>
+<span class="line"><span style="color:#6A737D">// ['constructor']</span></span>
+<span class="line"></span></code></pre>
+<h4 id="介绍方法">介绍方法</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法名</th><th>作用</th></tr></thead><tbody><tr><td>isPrototypeOf</td><td>检测原型是否是存在于某个实例中。</td></tr><tr><td>hasOwnProperty</td><td>检测一个属性是否为实例属性。</td></tr><tr><td>Object.getPrototypeOf</td><td>获取一个对象的原型。</td></tr><tr><td>Object.keys</td><td>获取对象所有可枚举的的实例属性。</td></tr><tr><td>Object.getOwnPropertyNames</td><td>获取当前对象的所有属 实例中的属性名，无论是否可枚举。</td></tr><tr><td>Object.getOwnPropertyDescriptor</td><td>获取对象实例属性的描述符。</td></tr></tbody></table>
+<h4 id="通过对象字面量重写原型">通过对象字面量重写原型</h4>
+<p>通过对象字面量重写原型，会失去 <code>constructor</code>。把原型修改为另外一个对象就等于切断了构造函数与最初原型之间的联系。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">constructor</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// function Person(){}</span></span>
+<span class="line"><span style="color:#79B8FF">person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'jojo'</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">constructor</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// undefined</span></span>
+<span class="line"></span></code></pre>
+<p>把原型修改为另外一个对象就等于切断了构造函数与最初原型之间的联系。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'jojo'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person1 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.name) </span><span style="color:#6A737D">// jojo</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'dio'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  age: </span><span style="color:#79B8FF">120</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person2 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person2.name) </span><span style="color:#6A737D">// dio</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.name) </span><span style="color:#6A737D">// jojo</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person2.age) </span><span style="color:#6A737D">// 120</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.name) </span><span style="color:#6A737D">// undefined</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">isPrototypeOf</span><span style="color:#E1E4E8">(person1)) </span><span style="color:#6A737D">// false</span></span>
+<span class="line"></span></code></pre>
+<h3 id="组合构造模式和原型模式">组合构造模式和原型模式</h3>
+<p>构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的属性。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> age;</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.friends </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'dio'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">sayName</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(name);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person1 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jojo'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">17</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person2 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'dio'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">person1.friends.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'bob'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.friends) </span><span style="color:#6A737D">// ['dio', 'bob']</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person2.friends) </span><span style="color:#6A737D">// ['dio']</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.friends </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> person2.friends) </span><span style="color:#6A737D">// false</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(person1.sayName </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> person2.sayName) </span><span style="color:#6A737D">// false</span></span>
+<span class="line"></span></code></pre>
+<h4 id="改进-1">改进</h4>
+<p>每个实例都会有自己的一份实例属性的副本，但同时又共享着对方法的引用。</p>
+<h4 id="问题-3">问题</h4>
+<p>构造函数和原型分离，不够内聚。</p>
+<h3 id="动态原型模式">动态原型模式</h3>
+<p>在构造函数中初始化原型。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  //属性 </span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#79B8FF">  this</span><span style="color:#E1E4E8">.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> age;</span></span>
+<span class="line"><span style="color:#6A737D">  //方法 </span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.sayName </span><span style="color:#F97583">!=</span><span style="color:#9ECBFF"> "function"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">      Person</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">prototype</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">sayName</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8"> () {</span></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">      };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span></code></pre>
+<h3 id="寄生构造函数">寄生构造函数</h3>
+<p>类似工厂模式。寄生构造函数返回的对象与构造函数以及构造函数的原型对象之间没有关系，所以可以使用其他模式的情况下，不要使用寄生构造函数模式。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">( </span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">age</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">  var</span><span style="color:#E1E4E8"> o </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Object</span><span style="color:#E1E4E8">(); </span></span>
+<span class="line"><span style="color:#E1E4E8">  o.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> name;</span></span>
+<span class="line"><span style="color:#E1E4E8">  o.age </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> age;</span></span>
+<span class="line"><span style="color:#E1E4E8">  o.job </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> job;</span></span>
+<span class="line"><span style="color:#E1E4E8">  o.</span><span style="color:#B392F0">sayName</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8">(){ </span></span>
+<span class="line"><span style="color:#B392F0">    alert</span><span style="color:#E1E4E8">( </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">. name); </span></span>
+<span class="line"><span style="color:#E1E4E8">  }; </span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> o; </span></span>
+<span class="line"><span style="color:#E1E4E8">} </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> person1 </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Person</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">" jojo"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">17</span><span style="color:#E1E4E8">, );</span></span>
+<span class="line"><span style="color:#E1E4E8">person1.</span><span style="color:#B392F0">sayName</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// jojo</span></span>
+<span class="line"></span></code></pre>
+<h3 id="稳妥构造函数模式">稳妥构造函数模式</h3>
+<p>不使用 new 和 this，在安全性要求高的时候用到。与寄生构造函数模式类似，使用稳妥构造函数模式创建的对象与构造函数之间也没有什么关系，因此 instanceof 操作符对这种对象也没有意义。</p> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

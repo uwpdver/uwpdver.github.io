@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E5%AF%B9%E7%A7%B0%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91%E4%BA%8C%E5%8F%89%E6%A0%91%E9%80%92%E5%BD%92/"><!-- Primary Meta Tags --><title>对称的二叉树——二叉树，递归 | 刘志豪的QQ空间</title><meta name="title" content="对称的二叉树——二叉树，递归 | 刘志豪的QQ空间"><meta name="description" content="请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E5%AF%B9%E7%A7%B0%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91%E4%BA%8C%E5%8F%89%E6%A0%91%E9%80%92%E5%BD%92/"><meta property="og:title" content="对称的二叉树——二叉树，递归 | 刘志豪的QQ空间"><meta property="og:description" content="请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E5%AF%B9%E7%A7%B0%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91%E4%BA%8C%E5%8F%89%E6%A0%91%E9%80%92%E5%BD%92/"><meta property="twitter:title" content="对称的二叉树——二叉树，递归 | 刘志豪的QQ空间"><meta property="twitter:description" content="请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-11-01T04:06:00.000Z"> Nov 1, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 对称的二叉树——二叉树，递归 </div> </div> <article class="animate"> <h2 id="题目">题目：</h2>
+<p>请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。</p>
+<p>例如，二叉树 [1,2,2,3,4,4,3] 是对称的。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>二叉树-1</span></span>
+<span class="line"><span>    1</span></span>
+<span class="line"><span>   / \</span></span>
+<span class="line"><span>  2   2</span></span>
+<span class="line"><span> / \ / \</span></span>
+<span class="line"><span>3  4 4  3</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>二叉树-2</span></span>
+<span class="line"><span>    1</span></span>
+<span class="line"><span>   / \</span></span>
+<span class="line"><span>  2   2</span></span>
+<span class="line"><span>   \   \</span></span>
+<span class="line"><span>   3    3</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="示例">示例：</h3>
+<p>示例一：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：root = [1,2,2,3,4,4,3]</span></span>
+<span class="line"><span>输出：true</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>示例二：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：root = [1,2,2,null,3,null,3]</span></span>
+<span class="line"><span>输出：false</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="限制">限制:</h3>
+<p><code>0 &#x3C;= 节点个数 &#x3C;= 1000</code></p>
+<h2 id="思路">思路</h2>
+<h3 id="检测中序遍历后的序列"><del>检测中序遍历后的序列</del></h3>
+<p>观察题目之后，第一个想到的思路是将二叉树中的数字按照中序遍历添加到一个数组中，由于中序遍历的特点，数组中间的元素是树的根节点，左侧是左子树生成的中序遍历数组，右边是右子树生成的中序遍历数组。一颗对称的树所生成的数组左右两侧是对称的，可以用类似检测回文的方式检测该数组，来达到检测对称二叉树的目的。</p>
+<p>例如，对于上文中的二叉树-1，中序遍历之后生成的数组为以下顺序。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#79B8FF">3</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 4</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 4</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 3</span></span>
+<span class="line"></span></code></pre>
+<p>具体做法是：在数组的前后设置双指针，检测两个指针指向的数字是否相等，如果不相等则不是对称二叉树，直到两个指针重合。</p>
+<p>后来发现这种检测方式是不严谨的，一个明显的反例。有一棵二叉树如下所示：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#E1E4E8">二叉树</span><span style="color:#F97583">-</span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#79B8FF">    5</span></span>
+<span class="line"><span style="color:#F97583">   /</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  4</span><span style="color:#79B8FF">   1</span></span>
+<span class="line"><span style="color:#E1E4E8">   \   \</span></span>
+<span class="line"><span style="color:#79B8FF">   1</span><span style="color:#79B8FF">    4</span></span>
+<span class="line"><span style="color:#9ECBFF">  /</span><span style="color:#9ECBFF">    /</span></span>
+<span class="line"><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF">    2</span></span>
+<span class="line"></span></code></pre>
+<p>对于二叉树-3，中序遍历之后生成的数组为以下顺序。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#79B8FF">4</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 5</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> -></span><span style="color:#79B8FF"> 4</span></span>
+<span class="line"></span></code></pre>
+<p>这个数组是明显是左右对称的，但是生成它的二叉树也明显不是对称二叉树。这是因为不同的二叉树中序遍历的结果可能是相同的，而且有很多种情况。所以这个思路行不通。</p>
+<h3 id="递归检测左右子树">递归检测左右子树</h3>
+<p>观察对称二叉树的结构，可以发现，对称的关键是<strong>根节点的左子树和右子树互为镜像</strong>，而两个树互为镜像需要满足的条件是：</p>
+<ol>
+<li>都为 null 的两棵树互为镜像。</li>
+<li>两棵树中只有一棵树为 null，则这两棵树不互为镜像。</li>
+<li>根节点的值相同</li>
+<li>A  树的左子树与 B 树的右子树互为镜像。</li>
+<li>A 树的右子树与 B 树的左子树互为镜像。</li>
+</ol>
+<p>问题拆分之后，有了递归的结构。这样可以把以上的规则对应到递归问题框架的每个步骤中：</p>
+<ul>
+<li>递归终止：1，2。</li>
+<li>处理当前节点：3。</li>
+<li>缩减问题规模，解决子问题：4，5。</li>
+</ul>
+<p><a href="https://www.processon.com/view/link/617f9003f346fb0ef3d51641">图解</a></p>
+<h3 id="要点">要点：</h3>
+<ul>
+<li>每个递归函数要处理的是<strong>两个</strong>树的根节点，而在一般的二叉树问题中，每个递归函数往往只用处理单个节点，虽然处理的节点数量不同，但是基本的原则是一致的：处理当前层级，拆分出当前问题的子问题，求解子问题，根据子问题的解计算出当前问题的解。</li>
+<li>谨慎处理递归退出条件。</li>
+</ul>
+<h2 id="代码">代码</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D"> * function TreeNode(val) {</span></span>
+<span class="line"><span style="color:#6A737D"> *     this.val = val;</span></span>
+<span class="line"><span style="color:#6A737D"> *     this.left = this.right = null;</span></span>
+<span class="line"><span style="color:#6A737D"> * }</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@param</span><span style="color:#B392F0"> {TreeNode}</span><span style="color:#E1E4E8"> root</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#F97583">@return</span><span style="color:#B392F0"> {boolean}</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#B392F0"> isSymmetric</span><span style="color:#F97583"> =</span><span style="color:#F97583"> function</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">root</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">root) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> dfs</span><span style="color:#E1E4E8">(root.left, root.right);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> dfs</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">treeLeft</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">treeRight</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 处理递归终止条件</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">treeLeft </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">treeRight) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">(treeLeft </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> treeRight)) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">        // 处理当前节点</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (treeLeft.val </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> treeRight.val) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">        // 递归处理子节点</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> dfs</span><span style="color:#E1E4E8">(treeLeft.left, treeRight.right)</span></span>
+<span class="line"><span style="color:#F97583">            &#x26;&#x26;</span><span style="color:#B392F0"> dfs</span><span style="color:#E1E4E8">(treeLeft.right, treeRight.left);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span></code></pre>
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/dui-cheng-de-er-cha-shu-lcof/">剑指 Offer 28. 对称的二叉树 - 力扣（LeetCode） (leetcode-cn.com)</a></li>
+</ul> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

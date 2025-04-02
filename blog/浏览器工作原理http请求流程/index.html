@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86http%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B/"><!-- Primary Meta Tags --><title>浏览器工作原理——HTTP请求流程 | 刘志豪的QQ空间</title><meta name="title" content="浏览器工作原理——HTTP请求流程 | 刘志豪的QQ空间"><meta name="description" content="《浏览器工作原理》专栏第三节的学习笔记，学习了浏览器中发起 HTTP 请求的流程。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86http%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B/"><meta property="og:title" content="浏览器工作原理——HTTP请求流程 | 刘志豪的QQ空间"><meta property="og:description" content="《浏览器工作原理》专栏第三节的学习笔记，学习了浏览器中发起 HTTP 请求的流程。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86http%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B/"><meta property="twitter:title" content="浏览器工作原理——HTTP请求流程 | 刘志豪的QQ空间"><meta property="twitter:description" content="《浏览器工作原理》专栏第三节的学习笔记，学习了浏览器中发起 HTTP 请求的流程。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-17T03:14:00.000Z"> Oct 17, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 浏览器工作原理——HTTP请求流程 </div> </div> <article class="animate"> <h2 id="http-请求流程">HTTP 请求流程</h2>
+<p><img src="https://bl3301files.storage.live.com/y4msr6Uc6wYHTsbX_u5y-DOad3OueQXHcOqb1MGUUNZPY-VZL5DWNP1xU1HNF5rQfDPO54I-mImOk9J2Q_dJxsARjxkWQpyd9NeQDoogErqBO1UaGTZVbss1JGHOba9ENbuJX_NejYXzcBd86dQRLP7VgGDGkmRNv1U0xvhtvW19KrZLJBtsurVtmG1lA4djMLy?width=1142&#x26;height=423&#x26;cropmode=none" alt="HTTP 请求流程示意图" title="HTTP 请求流程示意图"></p>
+<ol>
+<li>构建请求</li>
+<li>查找缓存</li>
+<li>准备 IP 地址和端口</li>
+<li>等待 TCP 队列</li>
+<li>建立 TCP 连接</li>
+<li>发起 HTTP 请求
+<ul>
+<li>发送请求行</li>
+<li>发送请求头</li>
+</ul>
+</li>
+<li>服务器处理请求
+<ul>
+<li>服务器返回请求行</li>
+<li>服务器返回响应头</li>
+<li>服务器返回响应体</li>
+</ul>
+</li>
+<li>断开 TCP 连接</li>
+</ol>
+<h2 id="浏览器缓存">浏览器缓存</h2>
+<h3 id="强缓存">强缓存</h3>
+<p>不会向服务器发送任何请求，直接从本地缓存中读取并且返回状态码：200 OK。
+200 from memory cache：缓存在内存中，从内存中读取，浏览器关闭则丢失。
+200 from disk cache：缓存在磁盘中，从磁盘中读取，浏览器关闭仍然存在。<br>
+优先级：memory cache > disk cache > network</p>
+<h3 id="协商缓存">协商缓存</h3>
+<p>向服务器发送请求，服务器根据这个请求头部中的一些参数判断是否命中协商缓存，如果命中，则返回 304 状态码，并带上新的响应头部通知浏览器从缓存中读取资源。
+<img src="https://bl3301files.storage.live.com/y4mulom0HnZDweCxsXb1AGyz8wwE_5m_talDCI9hWol5x2HjRVyMVD_CeIBV7Rr_AuYegs5eW715ER9NRf5a7-SZE7LgsEHEYff99S015zMVUp2EE8TAmErXCkzGTV7xJS9sDQKg_dAUe15WJaD9JybZogDADtYJvABx8XCZDLhfGI7MNZYGrbz2hRZAD1uNvly?width=627&#x26;height=884&#x26;cropmode=none" alt="浏览协商缓存机制流程图" title="浏览协商缓存机制流程图"></p>
+<p>Last-Modifed/If-Modified-Since 和 Etag/If-None-Match 是分别成对出现的，呈一一对应关系。“/”之前的字段是在响应头中的，“/”之后的字段是请求头中的。当响应被缓存时，浏览器根据缓存中对应资源的的响应头中的 Etag 和 Last-Modifed 字段判断是否在请求头中附加 If-Modified-Since 和 If-None-Match 字段。</p>
+<p>Etag：<br>
+Etag是属于HTTP 1.1属性，它是由服务器（Apache 或者其他工具）生成返回给前端，用来帮助服务器控制 Web 端的缓存验证。 Apache 中，Etag 的值，默认是对文件的索引节（INode），大小（Size）和最后修改时间（MTime）进行Hash后得到的。</p>
+<p>If-None-Match:<br>
+当资源过期时，浏览器发现响应头里有 Etag，则再次向服务器请求时带上请求头 If-None-Match(值是 Etag 的值)。服务器收到请求进行比对，决定返回 200 或 304。</p>
+<p>Last-Modified：
+源服务器认为资源最后的修改时间</p>
+<p>If-Modified-Since：
+当资源过期时（浏览器判断 Cache-Control 标识的 max-age 过期），发现响应头具有 Last-Modified 声明，则再次向服务器请求时带上头 If-Modified-Since，表示请求时间。服务器收到请求后发现有 If-Modified-Since 则与被请求资源的最后修改时间进行对比（Last-Modified）,若最后修改时间较新（大），说明资源又被改过，则返回最新资源，HTTP 200 OK;若最后修改时间较旧（小），说明资源无新修改，响应HTTP 304 走缓存。</p>
+<ul>
+<li>Last-Modifed/If-Modified-Since 的时间精度是秒，而 Etag 可以更精确。</li>
+<li>Etag优先级是高于Last-Modifed 的，所以服务器会优先验证 Etag</li>
+<li>Last-Modifed/If-Modified-Since 是http1.0的头字段</li>
+</ul>
+<h2 id="dns">DNS</h2>
+<p>HTTP 协议是基于 TCP/IP 的，建立 TCP 连接需要 IP 地址，对于用户而言代表网络资源的 URL 中提供的都是便于记忆的域名，所以就需要 DNS 将域名转换成 IP，浏览器提供 DNS 缓存。</p>
+<h2 id="最大连接数">最大连接数</h2>
+<p>同一个域名下最多拥有 6 个已建立的 TCP 连接。多出的请求会排队等待，直至有可用的连接。</p>
+<h2 id="请求行格式">请求行格式</h2>
+<h3 id="http-请求行">HTTP 请求行</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>请求方法</th><th>请求URL</th><th>协议版本</th></tr></thead><tbody><tr><td>GET</td><td>/library?search=news</td><td>HTTP/1.1</td></tr></tbody></table>
+<h3 id="http-响应行">HTTP 响应行</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>协议版本</th><th>状态码</th></tr></thead><tbody><tr><td>HTTP/1.1</td><td>200 OK</td></tr></tbody></table> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

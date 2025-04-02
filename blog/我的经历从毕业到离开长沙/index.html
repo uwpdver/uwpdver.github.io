@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E6%88%91%E7%9A%84%E7%BB%8F%E5%8E%86%E4%BB%8E%E6%AF%95%E4%B8%9A%E5%88%B0%E7%A6%BB%E5%BC%80%E9%95%BF%E6%B2%99/"><!-- Primary Meta Tags --><title>我的经历——从毕业到离开长沙 | 刘志豪的QQ空间</title><meta name="title" content="我的经历——从毕业到离开长沙 | 刘志豪的QQ空间"><meta name="description" content="一些我毕业之后的一些经历和对长沙这个我生活了两年多的城市的怀念。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E6%88%91%E7%9A%84%E7%BB%8F%E5%8E%86%E4%BB%8E%E6%AF%95%E4%B8%9A%E5%88%B0%E7%A6%BB%E5%BC%80%E9%95%BF%E6%B2%99/"><meta property="og:title" content="我的经历——从毕业到离开长沙 | 刘志豪的QQ空间"><meta property="og:description" content="一些我毕业之后的一些经历和对长沙这个我生活了两年多的城市的怀念。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E6%88%91%E7%9A%84%E7%BB%8F%E5%8E%86%E4%BB%8E%E6%AF%95%E4%B8%9A%E5%88%B0%E7%A6%BB%E5%BC%80%E9%95%BF%E6%B2%99/"><meta property="twitter:title" content="我的经历——从毕业到离开长沙 | 刘志豪的QQ空间"><meta property="twitter:description" content="一些我毕业之后的一些经历和对长沙这个我生活了两年多的城市的怀念。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-30T06:22:00.000Z"> Oct 30, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 1 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 我的经历——从毕业到离开长沙 </div> </div> <article class="animate"> <p>我是 2019 大学毕业的，快毕业时为了找工作自学了一点 Python 就去找工作了，由于我简历也没什么拿得出手的东西，所有投了简历也没几家公司愿意搭理。那段时间我总共有两次面试经历，第一次大老远从株洲跑到广州面试一个游戏公司的运营岗位，面试完在广州玩了一天就回学校了。过了好一段时间给我发了 offer，但是因为薪资开得太低被我拒绝了。</p>
+<p>第二次面试是在长沙，一家很小很小的公司，当时我去面试的时候，整个公司大概只有十个工位。面试官就是公司的主管，他说我的毕业设计的课题和他博士论文的课题是一个方向的，刚好他问的一些专业的问题我都能答得上来，于是觉得我很不错。这件事情在之后每次开大会回忆往事的时候，他都会拿出来说。面试完了之后主管说我明天就可以来上班了，面对这么热情的态度，当时的我有点受宠若惊，而且薪资方面对于那时候的我已经很不错了，于是就定下来了。</p>
+<p>入职的时候应聘的岗位是软件工程师，对于初出茅庐的我来说，软件工程师是做什么的我也不太清楚，我只知道是写代码的。因为公司当时做的项目缺一个前端开发，于是就要刚入职的我做前端。我在大学时有接触到 HTML，CSS，JavaScript 等技术，但也是学习到一些皮毛。</p>
+<p>入职之后我学了一个星期的 react，就出差去了广州的总部驻场开发，我当时并不觉得驻场开发有什么不好，不用租房，每天有餐补而且上班还不用打卡，有这些我已经很满足了。到了广州看了几天文档就开始上手了，项目工期紧张，只能边学边做。那个项目是从 0 到 1 开发一个少儿编程的网站，这项任务也许对于经验丰富的前端来说很简单，但对于刚毕业没有任何经验的我来说做起来处处都会碰壁，所以为了跟上进度那两个月也加了不少班，有时下班回去之后还在写代码写到凌晨。现在回想起来，那是我一段很宝贵的经历，也是我快速成长的一段时间。在那期间我还受到了不少人的帮助，当时的后端开发和我很聊得来，他技术比我好也比我有经验，我们技术团队在广州的几个人都是由他负责，我请教了他不少问题，我们也总是一起吃饭和加班，我们之后成为了很好的朋友，离职之后还常有联系。还有当时的产品经历和 UI 设计师人也很好，都是很优秀的人。还有一个另外请的兼职外包前端，产品经理和 UI 设计对他都不怎么待见，但是我还是在他的代码里学到了不少的东西。我对他们表示由衷的感谢。</p>
+<p>开发完第一个版本之后我就回到了长沙，在这里租了房安置了下来。回来之后依然还是做之前的那个项目，那个网站还要持续地迭代和维护，按照老板的画的饼，他是想借助这个产品从教育行业进军互联网行业。随着项目规模一点一点做大，公司的人数从起初的 10几个人慢慢地增加到了 30 几个人，公司也搬去了一个更大的写字楼，我做的那个项目也迭代了一个又一个的版本，我的工作能力也受到了领导的认可，也给我加了几次薪水。可最终公司的业务并没有像老板画的饼一样迅速扩张起来。恰恰相反，2020 年爆发的新冠疫情和随后的 2021 年国家又开始出台对教育行业的限制政策令教育行业陷入寒冬，而公司的经营情况也是一片惨淡，员工的工资也是越发越晚。眼看着公司一点点地衰落，在为公司工作了两年多之后我终于离开了这家公司。不久后我离开了长沙，回了自己家。</p>
+<p>长沙是个不错的地方，我是湖南人，所以这里的食物符合我口味，这里的茶颜悦色不贵而且还挺好喝，还有很多小吃。长沙最不缺的就是那种打着童年味道噱头的饭店，但是在这里很多小巷里的老店也是生意兴隆。这里有各种网红店，虽然大部分网红店都不怎么样。一到节假日五一广场就是人山人海，到处都要排队。</p>
+<p>这里的演出活动很多，在大学期间我去长沙看过音乐节，看过五月天的演唱会。我喜欢听说唱音乐，长沙有一个很屌的说唱团体——C-Block，他们的歌我都很喜欢，他们的说唱增加了我对长沙的好感。在这里我还去看了我最喜欢的说唱歌手——法老的 Livehouse 专场，第一次在现实中这么近距离地看到一个明星，对这个人好像很熟悉，但是又很意外惊喜的感觉。我觉得那晚在 Livehouse 中发生的一切都很不真实。</p>
+<p>虽然也有城市的喧嚣，但长沙的人生活节奏不会太快。我的工作是双休，我有时周末会约朋友去打打篮球。这里的房价是所有省会城市中最便宜的，年轻人还是有希望能自己买房的。我租的房子在一个老旧的小区，那一片住了很多老人，那小区里有一个十字路口，开了几家夜宵店，晚上的时候有很多人在那里吃夜宵。十字路口还有一个小超市，夏天的时候，我晚上洗完澡经常会穿着拖鞋去那个超市买饮料，顺便在路上吹吹风，快到秋天的时候的风吹着特别惬意。</p>
+<p>这两年里，我没去爬过岳麓山，没去逛过河西的大学城，没有参观过任何一个博物馆，也没去看过湖南电视台。我只是在这里平平淡淡地度过了两年，但到了离开的时候还是很怀念。</p>
+<p>我的下一站打算去广州。</p> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

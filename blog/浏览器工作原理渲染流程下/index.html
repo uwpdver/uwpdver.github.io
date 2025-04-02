@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B%E4%B8%8B/"><!-- Primary Meta Tags --><title>浏览器工作原理——渲染流程（下） | 刘志豪的QQ空间</title><meta name="title" content="浏览器工作原理——渲染流程（下） | 刘志豪的QQ空间"><meta name="description" content="《浏览器工作原理》专栏第六节的学习笔记，本篇是渲染流程章节的下篇，主要是讲解从分层到合成的过程，涉及到了更底层的概念。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B%E4%B8%8B/"><meta property="og:title" content="浏览器工作原理——渲染流程（下） | 刘志豪的QQ空间"><meta property="og:description" content="《浏览器工作原理》专栏第六节的学习笔记，本篇是渲染流程章节的下篇，主要是讲解从分层到合成的过程，涉及到了更底层的概念。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B%E4%B8%8B/"><meta property="twitter:title" content="浏览器工作原理——渲染流程（下） | 刘志豪的QQ空间"><meta property="twitter:description" content="《浏览器工作原理》专栏第六节的学习笔记，本篇是渲染流程章节的下篇，主要是讲解从分层到合成的过程，涉及到了更底层的概念。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-22T12:29:00.000Z"> Oct 22, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 浏览器工作原理——渲染流程（下） </div> </div> <article class="animate"> <h2 id="总结">总结</h2>
+<ol>
+<li>分层：将页面分成多个图层，每个图层可以独立栅格化。</li>
+<li>绘制：为每个图层生成对应绘制操作列表，每个绘制操作都代表一个绘图的步骤。</li>
+<li>分块：将图层分成若干图块，交给 GPU 进程栅格化。</li>
+<li>栅格化：栅格器由线程池，中的线程根据图块的绘制操作列表，将图块转化成位图数据。</li>
+<li>合成和显示：合成多个图层到内存中，然后显示在屏幕上。</li>
+</ol>
+<h2 id="分层layer">分层（layer）</h2>
+<p>一个图层是页面的一部分，它可以独立于其他层被变形和栅格化。每个节点都属于一个图层，没有特别指定层级的节点属于父节点的所在的图层。</p>
+<h3 id="单独提升为一个图层的条件">单独提升为一个图层的条件</h3>
+<ol>
+<li>
+<p>拥有堆叠上下文属性的元素</p>
+<ul>
+<li>
+<p>文档的根元素（<code>&#x3C;html></code>）；</p>
+</li>
+<li>
+<p>position     属性的值为 absolute（绝对定位）或     relative（相对定位）且 z-index 属性的值不为 auto；</p>
+</li>
+<li>
+<p>position 值为     fixed（固定定位）或 sticky（粘滞定位）的元素（沾滞定位适配所有移动设备上的浏览器，但老的桌面浏览器不支持）；</p>
+</li>
+<li>
+<p>flex (flexbox) 容器的子元素，且 z-index 值不为 auto；</p>
+</li>
+<li>
+<p>grid (grid) 容器的子元素，且 z-index 值不为 auto；</p>
+</li>
+<li>
+<p>opacity 属性值小于 1     的元素；</p>
+</li>
+<li>
+<p>mix-blend-mode     属性值不为 normal 的元素；</p>
+</li>
+<li>
+<p>以下任意属性值不为 none 的元素：</p>
+</li>
+<li>
+<ul>
+<li>transform</li>
+<li>filter</li>
+<li>perspective</li>
+<li>clip-path</li>
+<li>mask / mask-image / mask-border</li>
+<li>isolation 属性值为 isolate 的元素；</li>
+<li>-webkit-overflow-scrolling 属性值为 touch 的元素；</li>
+<li>will-change 值设定了任一属性而该属性在 non-initial 值时会创建层叠上下文的元素；</li>
+<li>contain 属性值为 layout、paint 或包含它们其中之一的合成值（比如 contain: strict、contain: content）的元素。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>需要被裁切的元素</p>
+<p>当一个元素的内容尺寸超过了元素本身的尺寸，并且指定了 overflow 属性，这时候就产生了裁剪。渲染引擎会把内容的一部分显示在元素区域内。</p>
+<p>出现这种裁剪情况的时候，渲染引擎会为内容元素单独创建一个层，如果出现滚动条，滚动条也会被提升为单独的层。</p>
+</li>
+</ol>
+<h2 id="绘制paint">绘制（paint）</h2>
+<p>绘制过程中为每个图层构建一个<strong>绘制操作（paint ops）列表</strong>。绘制的顺序是元素的堆叠顺序而不是 DOM 顺序，绘制会分成好几个阶段（backgrounds->floats->foregrounds->outlines->…），每个阶段都是对堆叠上下文的单独遍历。</p>
+<p><img src="https://bl3301files.storage.live.com/y4muxL_Nkw6OlPHZshXlEJnnlsue3YpuHpmem2wATf2X83kS_E4uZ6xIVxlJgTL3cZyk1r0PUQTJ2agNg9Mx5mGZ8_3AKgKAC_wgfluAqoj2MGFYQRq6-VUA376h5ZYkO49JQlH9bkDXJvKrgLPqBP2YU4vm3YcM1nweZYq-x7Ce07zIJpelOvWWcvyZvDBW38p?width=1151&#x26;height=527&#x26;cropmode=none" alt="绘制操作列表" title="从 DOM树 到布局树再到绘制操作的流程"></p>
+<p><img src="https://bl3301files.storage.live.com/y4mh7Z8bzs3f7LEs1joBMW2lxKrfyTvG1jLsK22Oe7DnoFWowayA9fYuxBXFM6U-oIBOjK-1_HvvaJ-TdsT--BeUv8syInTD4VgAVaphXkJn7Sh1OYIMMqqcbgTasiyNAaazfrVm1uakCLPH7MHd0QentyHmXEFOoFOs0q5S3eqrLXN3SRcncC22TlOqMzVPW7P?width=1151&#x26;height=526&#x26;cropmode=none" alt="绘制例子" title="绘制操作详细示例"></p>
+<h2 id="栅格化raster">栅格化（raster）</h2>
+<p>栅格化将绘制阶段构建的绘制操作列表转换成位图。</p>
+<h2 id="分块tilling">分块（tilling）</h2>
+<p>绘制操作列表准备好之后，主线程会将图层的绘制操作列表<strong>提交</strong>给合成器线程。</p>
+<p>图层可能会很大，这样的话栅格化整个图层耗费的代价是十分昂贵的，而且对那些图层中不可见的部分栅格化是完全没必要的。所以合成器线程会将图层分成若干个<strong>图块</strong>（tiles：瓷砖，瓦片）。</p>
+<h3 id="栅格化是多线程的">栅格化是多线程的</h3>
+<p>图块是栅格化的单元，被分块的若干图块会被一个栅格器线程池中的线程渲染。<strong>越靠近视口的图块越优先被栅格化</strong>。因为渲染进程是运行在沙盒中，所以无法直接执行操作系统调用。经过绘制后得到的数据被送到 GPU 进程栅格化，所以<strong>栅格器是运行在 GPU 线程中的</strong>。</p>
+<p><img src="https://bl3301files.storage.live.com/y4mIu1AfxShFTYRtq9511U9ICMTRgyO5HF8MzBhsl1VllEajRW8fgd5d09tL_dsbwtdyPQmn2WTOLj2d46Xsc8JV4dSVhQIKQA-ZK3tlrxkjR_nacACU6TTeQTboYIHBgZZL-wy6uzOHOZbBSRoD9GiMmcDj-csuTM5gGcy72QrCWRyxOrI4o_3Ki3Jc-03F72f?width=1151&#x26;height=531&#x26;cropmode=none" alt="分块和栅格器线程池" title="分块和栅格器线程池"></p>
+<p>栅格化之后生成的位图被存储在内存中，通常是由 OpenGL 纹理对象引用的 GPU 内存。GPU 还可以运行生成位图的命令（“加速栅格化”）。</p>
+<h2 id="合成与显示">合成与显示</h2>
+<p>图块被栅格化之后，合成器线程会生成一个 DrawQuads 命令，这个命令代表在屏幕上一个特定位置画出图块。这个命令还没有真正地转化成屏幕上的像素，而是对应在内存中的表示。最后再将内存中的数据显示在屏幕上（显示这个步骤很模糊，课程中也是一笔带过）。</p>
+<h2 id="回顾">回顾</h2>
+<p><img src="https://bl3301files.storage.live.com/y4mq3n5KbzaoK7vSk-oJXoHis8oTLw0ac-KhD2JRCFQC-VBGoJVsTfpPFZEQ7hUmuCLvPnc6v-3V3JDDcR7TNvohezCTXdFxSW8baS2yMGyc7gQBM7O8T1MpbGrbPQDqJpvOnHvfz-BxBQARjhLxBFzvG-jll_PF8FvAeoJCxxLv2lk5NDX_YtV637dvhmR-GXw?width=1150&#x26;height=627&#x26;cropmode=none" alt="从 HTML 到像素的总流程图" title="从 HTML 到像素的总流程图"></p>
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><a href="https://docs.google.com/presentation/d/1boPxbgNrTU0ddsc144rcXayGA_WF53k96imRH8Mp34Y/edit#slide=id.ga884fe665f_64_29">Life of a Pixel（PPT）</a></li>
+</ul> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

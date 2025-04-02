@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E6%8A%98%E8%85%BE%E5%8D%9A%E5%AE%A2%E7%9A%84%E4%B8%80%E5%A4%A9/"><!-- Primary Meta Tags --><title>折腾博客的一天 | 刘志豪的QQ空间</title><meta name="title" content="折腾博客的一天 | 刘志豪的QQ空间"><meta name="description" content="为博客更新了几个库，增加了作品页面。npm 的环境依赖问题真是让人火大。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E6%8A%98%E8%85%BE%E5%8D%9A%E5%AE%A2%E7%9A%84%E4%B8%80%E5%A4%A9/"><meta property="og:title" content="折腾博客的一天 | 刘志豪的QQ空间"><meta property="og:description" content="为博客更新了几个库，增加了作品页面。npm 的环境依赖问题真是让人火大。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E6%8A%98%E8%85%BE%E5%8D%9A%E5%AE%A2%E7%9A%84%E4%B8%80%E5%A4%A9/"><meta property="twitter:title" content="折腾博客的一天 | 刘志豪的QQ空间"><meta property="twitter:description" content="为博客更新了几个库，增加了作品页面。npm 的环境依赖问题真是让人火大。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-29T17:57:00.000Z"> Oct 30, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 折腾博客的一天 </div> </div> <article class="animate"> <p>　　今天一整天都花在了折腾博客上。起因只是我想给我的博客加一个个人作品页面。实现的时候想到可能不止一个作品，应该是一个列表，所以最好是动态创建页面，创建页面的动态数据用 JSON 保存，后来看到了 Gatsby 可以直接导入 JSON 和 Yaml 文件，发现 yaml 语法更简洁，于是选择用 Yaml 作为数据源。然后又发现刚好有一个叫 gatsby-transformer-yaml 的 gatsby 插件可以将 Yaml 文件转化成可以用 graphQL 查询的对象，但是当我在安装这个插件的时候 npm 每次都报错 <code>unable to resolve dependency tree.</code>，重试了好几次，每次都安装失败。我去网上搜索安装失败的报错信息，看到一个删除 node_modules，清除 npm 缓存的方法，想试一下，结果 node_modules 因为 windows 的权限问题一直删不掉，错误提示是需要另一个用户的权限。就这样从一个错误到了另外一个错误。我干脆把博客的代码库重新克隆下来，重新安装一次依赖。结果这个新克隆的仓库还是有同样的问题，这让我很烦躁。</p>
+<p>我再仔细看了报错的信息，发现有可能是 nodejs 版本的问题，我又把 node 更新到了最新版，期间又出了错，但试了两次还是更新好了。随后又发觉有可能是 Gatsby 版本的问题，于是一狠心又把 Gatsby 从 3.x 的版本更新到了最新的 4.x 版本，看文档上说 4.x 相比 3.x 版本构建速度提升了 40%。我满心期待地升级完 Gatsby 之后，再把和新版不兼容的插件也更新到新版。发现好像是用一个 npm install 的选项参数 <code>--legacy-peer-deps</code> 可以正常安装。经过一番漫长的挣扎终于把 gatsby-transformer-yaml 这个插件安装上了。然后看教程学怎么用 graphQL  查询的数据动态创建页面。然后 createPage 怎么传递参数到模板，模板怎么用页面的参数查询数据。好不容易折腾出来了两个页面。</p>
+<p>已经可以通过文件系统中指定路径的 Yaml 文件动态创建页面了，接下来就是给页面添加上样式。添加样式的过程中发现给元素起一个合适的类名实在是太难了，于是又想起了老朋友 tailwindcss。索性又安装了 tailwindcss，安装的过程也不是很顺畅。然后既然要换用 tailwindcss 了，那么之前的很多样式就可以删除了，于是替换样式又花了我好几个小时。tailwindcss 会重设浏览器的默认样式，而我博文章的页面本来需要浏览器的默认样式，这样一来我还得一个个地给把那些样式给加回来，这太麻烦了，我去官方文档找有没有简便一点的方法，然后就发现了 @tailwindcss/typography 这个插件，它只用给一个标签加上一个特定的类名，就可以恢复该标签内所有被 tailwindcss 重设的默认样式，或者是添加另一套排版的样式。为了方便统一样式，我还把一些元素拆分成了组件，有的组件可能仅是封装了特定的样式的 HTML 标签，也许不是很有提炼成组件的必要。但是这样组件化之后，写起来还挺方便的，也不用一串类名重复复制好多遍。</p>
+<p>折腾到晚上，接下来要在产品页面做一个可以横向滚动的屏幕截图列表的两个导航按钮，分别负责将列表滚动到前一个屏幕截图的位置和后一个屏幕截图的位置。到了晚上脑子已经一团浆糊了，但是最终还是被我做出来了一个能用的。思路大概是点击向前/向后按钮的时候根据当前滚动的位置和滚动条的总长度的比例来计算当前是第几个元素，然后获取到当前元素的前/后一个元素，调用该元素的 <code>scrollIntoView</code> 方法。虽然说起来很简单，但是我想到这个方法可是不容易，从开始写到可以用的过程还出了好几次错误。</p>
+<p>最后新页面也完成了，升级的依赖看上去也没什么问题了，准备推代码部署了。结果不知道是什么原因只要一同步远端的代码就会报错，试了好几次，好不容易有一次成功了，把新的代码推到了 GitHub。结果在部署的时候又出问题了：cloundflare page 构建的时候出错。重试了几次还是一样。看到错误信息好像是 node 版本不兼容的问题。但是我也不知道怎么改变部署时用的 node 版本。经过多次搜索得知，cloundflare page 在部署时会有一些环境变量，可以通过 NODE VERSION 这些个环境变量来指定部署时使用特定的 node 版本。经过我一番努力终于部署成功了。</p>
+<p>今天一天不知道遇到了多少 bug，关于写代码的问题很少，大都是环境依赖的问题。环境问题真是让人头大。唯一值得欣慰的是新增的两个页面都还挺好看的，而且最终也都把问题解决了。</p> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

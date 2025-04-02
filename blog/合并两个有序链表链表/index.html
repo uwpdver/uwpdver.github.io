@@ -1,0 +1,262 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%E9%93%BE%E8%A1%A8/"><!-- Primary Meta Tags --><title>合并两个有序链表——链表 | 刘志豪的QQ空间</title><meta name="title" content="合并两个有序链表——链表 | 刘志豪的QQ空间"><meta name="description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%E9%93%BE%E8%A1%A8/"><meta property="og:title" content="合并两个有序链表——链表 | 刘志豪的QQ空间"><meta property="og:description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%E9%93%BE%E8%A1%A8/"><meta property="twitter:title" content="合并两个有序链表——链表 | 刘志豪的QQ空间"><meta property="twitter:description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-26T13:34:00.000Z"> Oct 26, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 3 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 合并两个有序链表——链表 </div> </div> <article class="animate"> <h2 id="题目">题目：</h2>
+<p>将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。</p>
+<h3 id="示例">示例：</h3>
+<p>示例一：</p>
+<p><img src="https://bl3301files.storage.live.com/y4m6LzKDyuHqeTLPt1Z5PA_EedFEM2qsUV5z5izHzn0pgrZkpFbxQmJ2bdL6ALAkH7TQ9wnbtnQOIJalVkPX7X1co92QDA-wBIR6w-LGjgYQqBLInuEWJ9M1zuQUHHAUKn9MTn10F2lVrYIJzxiLiRNELyEy4mWdq9a1cZRneFu5asRwpiQ6-97gTZek4bjJC-J?width=662&#x26;height=302&#x26;cropmode=none" alt="示例一图片"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：l1 = [1,2,4], l2 = [1,3,4]</span></span>
+<span class="line"><span>输出：[1,1,2,3,4,4]</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>示例二：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：l1 = [], l2 = []</span></span>
+<span class="line"><span>输出：[]</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>示例三：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：l1 = [], l2 = [0]</span></span>
+<span class="line"><span>输出：[0]</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="提示">提示：</h3>
+<ul>
+<li>两个链表的节点数目范围是 <code>[0, 50]</code></li>
+<li><code>-100 &#x3C;= Node.val &#x3C;= 100</code></li>
+<li><code>l1</code> 和 <code>l2</code> 均按 <strong>非递减顺序</strong> 排列</li>
+</ul>
+<h2 id="思路">思路</h2>
+<p>假设有一条没有串球的红绳子，还有两条串着标有数字的球的链，每条链上球的标号都是从小到大依次递增的，每次从这两条链中选择一个数字最小的球串在红绳子上，当所有的球都串到红绳子上时，这条红绳子上的所有球上标的数字就是有序的了。</p>
+<p>这个问题的关键就在于如何选择数字最小的球。这两条链中各自最小的球都在最前面，但是不能确定哪条链中最小的数字更小，所以就要比较两条链中数字最小的球哪一个更小，并将其接到绳子上，这样一个球的顺序就排好了。因为上一轮比较已经将数字最小的球接在了红绳子上，因此不能重复选择。所以需要选择这条链的下一个球，也就是数字第二小的球与另一条链上数字最小的球比较，再选出两者之间数字较小的球接在绳子上。依次类推，直到其中一条链上的所有球都被接在红绳子上了，这样这条链已经没有球可以比较了。</p>
+<p>此时有可能另外一条链中还有部分球没有串到红绳上，但是可以确定的是，这条绳上的所有球都应该比最后一个被串到红绳上的球的数字大。因为只有当前链中选择的球比另一条链中的小才会该表选择到下一个球，才会先走到末尾。所以接下来只用将没有走完的那条链拼接到红绳上就完成了。</p>
+<p>将上述的步骤用在链表上就可以概括为：</p>
+<ol>
+<li>初始化指向两条链中指向未添加到新链的最小节点的指针。</li>
+<li>比较当前两个链表中最小的节点。</li>
+<li>然后将较小的节点拼接到当前已排序链表的最后一个节点后面。</li>
+<li>然后再迭代值向较小的节点的指针和指向已排序链表的最后一个节点的指针，迭代的方式都是向后移动一个节点。</li>
+<li>重复上述两个步骤，直到两个链的指针中有一个指向 null。</li>
+<li>拼接未遍历完的节点。</li>
+<li>返回新链表的头节点指针  。</li>
+</ol>
+<h3 id="步骤图解">步骤图解</h3>
+<ol>
+<li>初始状态</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mjvdbWSY68KCrefLyAHrHv2-gbnGTnyC-fn9IhGlYxMy9qusABzxkBVQq8wEryM-L3Frqej0I2FDEe3UJyLtktcy5USn6MN1iaQW6afVb2pXWc2XRkoIHPyxDoH7HDwID69BO5ybfG_ZUZj5hZJL3owOoij7UI-j7BaHB2LACeax_1rR06uyItdqUdrfiAyvl?width=660&#x26;height=478&#x26;cropmode=none" alt="初始状态" title="初始状态"></p>
+<ol start="2">
+<li>对比 p1.val 与 p2.val，将两条链表中更小的节点拼接到新链表。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mpAyoyFwiLr6LIBhPQiJ3rrcPgSWPbRoWI1a7kwanR51Oi26Rsr0cDl3aq8TiiKLdBtEIEc96Nx9dnx8_PjMJIEZ1WC0hiJ8T7LhIPaOIktrK4BjGGrIVlILtFO43MlSKakuDQ5gfylS9c4Cdm0pIt9WP4H1ALV-F-IgVJMsKQKNUqbKwz28PN_Fb_ANfmOU1?width=660&#x26;height=478&#x26;cropmode=none" alt="将两条链表中更小的节点拼接到新链表"></p>
+<ol start="3">
+<li>指针迭代，newList，p2 指针均向后移动一个节点。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4m12zHTlpZr9K6u-WvI2c3KFgGkHcb0nvseIir0TXRMcH9aGi2h_9LOPD-iKlIjHDE2HB-hmjaHWtFiSzjeUrXZcQKpYYqC0TfH1T6uPji7qg8zBK0qtKSkCRKhovPib1WhwAhHCZqXnySvFl1PTJDozc7O-pqMBGikbSkJ6lxPVMuBGKp1mdS1jhat-mx1ZdU?width=660&#x26;height=498&#x26;cropmode=none" alt="指针迭代" title="指针迭代"></p>
+<ol start="4">
+<li>重复步骤 2。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mWVwle5jMf_7WzzngaMZJOZWLy2YWzbYP5xSzkGBTcNXTerlJL0au-IwX9iTZFDmL1DlIlB3rQ3tEWhNPsCbSfQJ1--84yRvCYTC0pczoqCZWPno-Tnzk2DP1gvnx0NzuVNs_5oPi3wGmtf2Oq2HNJIvkJ4-HxMQV300ozWAdEGvBH0shABjbKvigzIBD6Lvg?width=660&#x26;height=498&#x26;cropmode=none" alt="拼接第二个节点" title="拼接第二个节点"></p>
+<ol start="5">
+<li>重复步骤 3。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4msoIxLeX72kg--BtWBmxm6z1Y4pj6X2Vhf0dc9x2VTcvdRt-lOupmjT24H0PoGLRl9FLZDvutD9VrUyUEs9duNtnDanJMqZMKz0_CCsBOJSNWHfkLzrVOps-xiWxDvt5KOEq7bxTWXw3_q6GnaF9Y8H73ZYl4OlNb9FDvS2T01jRWL5yzFdXUrzdWNb0_xQXQ?width=660&#x26;height=498&#x26;cropmode=none" alt="继续移动指针" title="继续移动指针"></p>
+<ol start="6">
+<li>重复步骤 2。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4msoIxLeX72kg--BtWBmxm6z1Y4pj6X2Vhf0dc9x2VTcvdRt-lOupmjT24H0PoGLRl9FLZDvutD9VrUyUEs9duNtnDanJMqZMKz0_CCsBOJSNWHfkLzrVOps-xiWxDvt5KOEq7bxTWXw3_q6GnaF9Y8H73ZYl4OlNb9FDvS2T01jRWL5yzFdXUrzdWNb0_xQXQ?width=660&#x26;height=498&#x26;cropmode=none" alt="继续移动指针" title="继续移动指针"></p>
+<ol start="7">
+<li>重复步骤 2。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4msoIxLeX72kg--BtWBmxm6z1Y4pj6X2Vhf0dc9x2VTcvdRt-lOupmjT24H0PoGLRl9FLZDvutD9VrUyUEs9duNtnDanJMqZMKz0_CCsBOJSNWHfkLzrVOps-xiWxDvt5KOEq7bxTWXw3_q6GnaF9Y8H73ZYl4OlNb9FDvS2T01jRWL5yzFdXUrzdWNb0_xQXQ?width=660&#x26;height=498&#x26;cropmode=none" alt="继续拼接" title="继续拼接"></p>
+<ol start="8">
+<li>重复步骤 3。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4m0leT614D9Sxs96pFlj22HmqEL5CmkBcajZngpaKaIDQthnt18J20hTihDSkNN0jD14l93obPlFOKD3SggN8NiwbhDb21EwNCyDUF6R3uxLiq9HvfbzeAPVWHOPICrZKz6yjoCwjcIAG7gkEWOHcjDl_mSi80GFPuDNn-YsudsffSqFKTQvFFBg-WSRftHoh0?width=660&#x26;height=498&#x26;cropmode=none" alt="继续移动指针" title="继续移动指针"></p>
+<ol start="9">
+<li>重复步骤 2。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4m_1JVjzGbWvBeyj7wVjcK4d399ZXzIYg98rWrQsNZIKK0leTlcPUAGs13XWVWYAfbw-p0zdSHpNiTefj9VDXnQo6WFSrW438tCwft9LdfHbX-8zj-w9BKCLN2esdpdV0nWqP1-2lgtwIYtspxjBfa_1cTRpBVtuwmCGVzVzu4iLel01yMkSG2YHZRRyx0QJBf?width=660&#x26;height=498&#x26;cropmode=none" alt="继续比较，拼接" title="继续比较，拼接"></p>
+<ol start="10">
+<li>重复步骤 3。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mtJsMQI9yhmF-tRY3aMpaKwkqOxgO55GRmAZ5PRZD8dD9xLnYDWtXaJtH7zcibvmuu5lHBj3OyklIkf5aR1zPEdaNx5KvIOU-HyKRTQalqp0eQX03XaThBrDTMh3w_HZjzAGJiheln0MO9S6dmJ_neFhe6S_NFvicozdzgD7ovBRDGaJ7V9J_TKbKJWY33CKt?width=660&#x26;height=498&#x26;cropmode=none" alt="继续移动指针" title="继续移动指针"></p>
+<ol start="11">
+<li>重复步骤 2。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mSqghN-ccfpkZ5ftJrXbuynW6Bx4guabWE3D2VPbuaWzlzSBbAhFxMR1LdQ_CC1WDvFi45EPMrw9NWRbDDPc26KfIndLlDnnKf-kuzsID7baMxG19Ei-tpWyxX_bC11G4VKPd1ZAwLciDAlkmYyqYSCrZL12DL6PpNhAkNTcAixL69ChuUzNgJBZB1oPhOoHP?width=660&#x26;height=498&#x26;cropmode=none" alt="继续比较，拼接" title="继续比较，拼接"></p>
+<ol start="12">
+<li>重复步骤 3。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mXsKmHgBu5xxlrX0WENBuOX45tX5SYI-bvKei9zGt8qMdZEzrZ69vrelpR1T0v4KCZgRIpI-Ep9SRu3zmeNMoU5ES650YCUZzKxTYGSSLicj-QOhHw8KITODs6re_F5dr3Z5_bYg-uRX7I-2v1uF47w5wFRbFw59yG2cDDNg1okHl8dJYSu5EtfEDiDYp8Z8Y?width=660&#x26;height=498&#x26;cropmode=none" alt="继续移动指针" title="继续移动指针"></p>
+<ol start="13">
+<li>到达链表末尾，退出循环，拼接未遍历完节点。</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4m09thjBQSLMFh2AoPNHa23iP-iMdBkC5NDm_-Bh22zpYaQkxjPCReV3vdEgs5wLZvlK81uYHKKCOcIJZOmyEIFszf7-vV0jVBiYCjKeCRUgaqnwG0FDs2QQZSSx-eVGeZgr21tp1tYG4t5DCYoFODRZvzlZ4T_5j6pEeChd7fvJ9SLPSYhlOHlv3ViFDrrjFl?width=660&#x26;height=498&#x26;cropmode=none" alt="拼接未遍历完节点" title="拼接未遍历完节点"></p>
+<ol start="14">
+<li>返回 dummy 的下一个节点</li>
+</ol>
+<p><img src="https://bl3301files.storage.live.com/y4mkPwgUo5y2MNriWB6Tocas0EaH_BNEgyGkCbibg67_dcoT-yvI39pXJklUMNP5SkL--wCGIGqVAmMd1ennZPkSvO4ivA7T8mmSIyAvfjIFdf0frvy0sOuUr6Jqat4sv2iN5F86BlLUofBs-1GBI5KMhG4u7LBE3m5QFj3jWRiQlhgQx8GhoFBgmMLRTMq7EaM?width=660&#x26;height=486&#x26;cropmode=none" alt="返回 dummy 的下一个节点" title="返回 dummy 的下一个节点"></p>
+<h3 id="递归解法">递归解法</h3>
+<p>这道题还有递归的解法，其实思路都一是相同的，只是缩减问题规模的方式不同。迭代方式的重复操作是放在循环里，而递归方式的重复操作则是放在函数中，每次递归的函数调用都相当于执行依次迭代方式中的循环体中的代码。递归方式的变量迭代通过<strong>参数传递</strong>和函数的<strong>返回值</strong>实现，而迭代方式则是直接为局部变量赋值。递归方式需要对不同的分支传递不同的参数，副作用和返回值也不同。细节直接看代码实现就能理解了。</p>
+<h2 id="注意">注意</h2>
+<ul>
+<li>其中一条链表遍历完之后就应该停止循环。</li>
+<li>将没有遍历完的链表从当前的节点开始拼接到新链表。</li>
+<li>使用 dummy 节点让所有的节点以相同的方式处理，而不用对首节点特殊处理。</li>
+<li>熟练链表的操作。</li>
+</ul>
+<h2 id="代码">代码</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Definition for singly-linked list.</span></span>
+<span class="line"><span style="color:#6A737D"> * class ListNode {</span></span>
+<span class="line"><span style="color:#6A737D"> *     val: number</span></span>
+<span class="line"><span style="color:#6A737D"> *     next: ListNode | null</span></span>
+<span class="line"><span style="color:#6A737D"> *     constructor(val?: number, next?: ListNode | null) {</span></span>
+<span class="line"><span style="color:#6A737D"> *         this.val = (val===undefined ? 0 : val)</span></span>
+<span class="line"><span style="color:#6A737D"> *         this.next = (next===undefined ? null : next)</span></span>
+<span class="line"><span style="color:#6A737D"> *     }</span></span>
+<span class="line"><span style="color:#6A737D"> * }</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"></span></code></pre>
+<h3 id="迭代解法">迭代解法</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> mergeTwoLists</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">l1</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">l2</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> dummyNode</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ListNode</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> [p1, p2, newList] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [l1, l2, dummyNode];</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#E1E4E8"> (p1 </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> p2) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        newList.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> p1.val </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> p2.val </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> p1 </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> p2; </span><span style="color:#6A737D">// 比较，拼接</span></span>
+<span class="line"><span style="color:#E1E4E8">        (p1.val </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> p2.val) </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> (p1 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> p1.next) </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (p2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> p2.next); </span><span style="color:#6A737D">// 指针迭代</span></span>
+<span class="line"><span style="color:#E1E4E8">        newList </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newList.next; </span><span style="color:#6A737D">// 指针迭代</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    newList.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> p1 </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> p2;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> dummyNode.next;</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span></code></pre>
+<h3 id="递归解法-1">递归解法</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> mergeTwoLists</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">l1</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">l2</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8">(l1 </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> l2){</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8">(l1.val </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> l2.val){</span></span>
+<span class="line"><span style="color:#E1E4E8">          l1.next </span><span style="color:#F97583">=</span><span style="color:#B392F0"> mergeTwoLists</span><span style="color:#E1E4E8">(l1.next, l2)</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> l1;</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          l2.next </span><span style="color:#F97583">=</span><span style="color:#B392F0"> mergeTwoLists</span><span style="color:#E1E4E8">(l1, l2.next)</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> l2;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> l1 </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> l2 </span><span style="color:#6A737D">// 到达一条链的末尾，返回另一条链中的当前遍历到的节点</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span></code></pre>
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/reverse-linked-list/">206. 反转链表 - 力扣（LeetCode） (leetcode-cn.com)</a></li>
+</ul> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

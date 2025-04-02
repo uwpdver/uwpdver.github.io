@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%AF%BC%E8%88%AA%E6%B5%81%E7%A8%8B/"><!-- Primary Meta Tags --><title>浏览器工作原理——导航流程 | 刘志豪的QQ空间</title><meta name="title" content="浏览器工作原理——导航流程 | 刘志豪的QQ空间"><meta name="description" content="《浏览器工作原理》专栏第四节的学习笔记，学习了浏览器在导航时发生事情。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%AF%BC%E8%88%AA%E6%B5%81%E7%A8%8B/"><meta property="og:title" content="浏览器工作原理——导航流程 | 刘志豪的QQ空间"><meta property="og:description" content="《浏览器工作原理》专栏第四节的学习笔记，学习了浏览器在导航时发生事情。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%AF%BC%E8%88%AA%E6%B5%81%E7%A8%8B/"><meta property="twitter:title" content="浏览器工作原理——导航流程 | 刘志豪的QQ空间"><meta property="twitter:description" content="《浏览器工作原理》专栏第四节的学习笔记，学习了浏览器在导航时发生事情。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-17T03:55:00.000Z"> Oct 17, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 浏览器工作原理——导航流程 </div> </div> <article class="animate"> <h2 id="总结">总结</h2>
+<p>从多个进程的角度，解释从浏览器接受到 URL 到页面显示中间的一些过程。重点主要是导航的过程，包括以地址栏输入 URL 的方式打开新的页面，或者从一个页面的链接跳转到另一个页面。</p>
+<p>文章的特点是说到了多个进程之间的通信和协作。主要是网络进程，浏览器进程，渲染进程之间的通信。在 Google 官方的文档中，分为浏览器进程，和渲染进程。其中浏览器进程包括 UI 线程，存储线程，网络线程。</p>
+<h2 id="导航流程">导航流程</h2>
+<ol>
+<li>
+<h3 id="处理输入浏览器进程-ui-线程">处理输入（浏览器进程->UI 线程）</h3>
+<p>用户在地址栏输入时，UI 线程会判断所输入的字符串是查询搜索还是 URL？如果是查询搜索则将查询内容发送到默认搜索引擎。如果是 URL 则发送到 URL 对应的网站。</p>
+</li>
+<li>
+<h3 id="向-url-发送请求浏览器进程-网络线程">向 URL 发送请求（浏览器进程->网络线程）</h3>
+<ul>
+<li>
+<p><strong>查找缓存</strong><br>
+网络进程会根据缓存机制查找缓存，如果缓存不可用，则需要发送请求进入网络请求流程。</p>
+<p>缓存过期，Last-Modified/If-Last-Modified，Etag/If-None-Modified，Expire，Cache-Control。200，304。</p>
+</li>
+<li>
+<p><strong>DNS 解析</strong><br>
+依次从浏览器 DNS 缓存，到本机的 host 文件，再发送 DNS 查询。递归查询。从根域名服务器遍历。</p>
+</li>
+<li>
+<p><strong>TCP 连接</strong><br>
+三次握手：SYN, SYN-ACK, ACK，四次挥手，传输控制</p>
+</li>
+<li>
+<p><strong>TLS 连接</strong><br>
+认证加密，重点是认证中心是可信的，认证中心将信任通过证书授予到某个 web 服务器。客户端通过认证中心的公钥解密证书，确认证书可信从而确认与之一同被发送的 web 服务器的公钥可信。再通该可信的公钥加密密钥，发送给当前连接中与之通信的 web 服务器，如果对方是同一个 web 服务器，那么就应该拥有对应的私钥，就能够解密数据从而取出密钥。</p>
+</li>
+<li>
+<p><strong>数据传输</strong><br>
+发送请求行，请求头，请求体。</p>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="阅读响应浏览器进程-网络线程">阅读响应（浏览器进程->网络线程）</h3>
+<ul>
+<li><strong>数据类型</strong><br>
+一旦收到响应体数据开始，网络线程根据响应头数据分析响应体的数据类型，并且更具不同的数据类型决定下一步。如果响应是 HTML 文件类型，则下一步的目的就是将数据传递给渲染进程，如果是 zip 文件类型或者其他文件请求，则需要将数据传递给下载管理器。</li>
+<li><strong>重定向</strong><br>
+如果响应头中的状态码为 301 或 302，则需要重定向，重定向的地址为响应头中的 Location 字段。然后重新发起新的请求。</li>
+<li><strong>安全检查</strong><br>
+这也是安全中断检测发生的地方。如果域名和响应数据被检测为恶意网站，则网络线程会发出警报以显示警告页面。此外 Cross Origin Read Block 检查的发生，以确保敏感的跨站点数据不会进入渲染过程。</li>
+</ul>
+</li>
+<li>
+<h3 id="查找渲染进程浏览器进程-网络线程-到-浏览器进程-ui-线程-到-渲染进程">查找渲染进程（浏览器进程->网络线程 到 浏览器进程->UI 线程 到 渲染进程）</h3>
+<p>完成安全检查之后，网络线程确信浏览器应该导航到请求的站点，网络线程通知 UI 线程数据已经准备就绪，然后 UI 线程找到一个渲染进程对网页进行渲染。</p>
+<p>由于网络请求可能需要几百毫秒才能得到响应，所以 UI 线程可以在网络线程收到响应数据之前尝试主动查找或启动与网络线程发送请求并行的渲染进程。当网络线程接受数据时，渲染进程已经准备就绪了。</p>
+</li>
+<li>
+<h3 id="提交导航浏览器线程---渲染线程">提交导航（浏览器线程 -> 渲染线程）</h3>
+<p>网络线程的响应数据和渲染进程都准备就绪时，浏览器进程将通过 IPC 通知渲染进程“提交导航”，此外浏览器进程还会将数据流传递给渲染进程，以便渲染进程可以继续接收响应数据。</p>
+</li>
+<li>
+<h3 id="确认提交渲染线程---浏览器线程">确认提交（渲染线程 -> 浏览器线程）</h3>
+<p>渲染线程接受完响应数据之后，通过 IPC 向浏览器进程发送“确认提交”的消息。此时导航阶段就完成了，进入文档加载阶段。</p>
+<p>浏览器进程的 UI 线程会更新地址栏，安全指示器，和站点设置的 UI以反映新页面的站点信息。选项卡的会话历史记录也将更新，会话历史记录存储在磁盘上。</p>
+</li>
+</ol>
+<h2 id="提交文档阶段">提交文档阶段</h2>
+<p>浏览器进程将网络进程接收到的 HTML 数据提交给渲染进程：</p>
+<ol>
+<li>网络进程下载并读取响应头数据。</li>
+<li>网络进程响应头数据下载并读取完毕后通知并将响应头数据发送给浏览器进程。</li>
+<li>浏览器进程通知渲染进程“提交文档”并将渲染头数据转发给渲染进程。</li>
+<li>渲染进程收到“提交文档”的消息以及响应头数据后，与网络进程建立数据传输的“管道”，直接从网络进程接收剩下的响应体数据。</li>
+<li>响应体数据传输完毕之后，渲染进程发送“确认提交”的消息给浏览器进程。</li>
+<li>浏览器进程收到“确认提交”的消息后，会更新浏览器界面状态，包括安全状态、地址栏的 URL、前进后退的历史状态、并更新页面。</li>
+</ol>
+<h2 id="渲染阶段">渲染阶段</h2>
+<p>Content-Type 决定浏览器对响应的处理方式，可能是转到下载管理器，也可能是当作网页处理（text/HTML）。</p>
+<h2 id="共用渲染进程">共用渲染进程</h2>
+<p>多个网页可能会公用一个渲染进程，取决于它们所属的站点和打开的方式：如果从 A 页面打开 B 页面，且 A 和 B 属于同一站点，那么 B 页面会 复用 A 页面的渲染进程，否则新打开的页面会使用单独的渲染进程。</p>
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><a href="https://developers.google.com/web/updates/2018/09/inside-browser-part2">Inside look at modern web browser (part 2)  |  Web  |  Google Developers</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/Performance/How_browsers_work">渲染页面：浏览器的工作原理</a></li>
+</ul> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>

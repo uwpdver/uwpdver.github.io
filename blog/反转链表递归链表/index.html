@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8%E9%80%92%E5%BD%92%E9%93%BE%E8%A1%A8/"><!-- Primary Meta Tags --><title>反转链表——递归，链表 | 刘志豪的QQ空间</title><meta name="title" content="反转链表——递归，链表 | 刘志豪的QQ空间"><meta name="description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8%E9%80%92%E5%BD%92%E9%93%BE%E8%A1%A8/"><meta property="og:title" content="反转链表——递归，链表 | 刘志豪的QQ空间"><meta property="og:description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8%E9%80%92%E5%BD%92%E9%93%BE%E8%A1%A8/"><meta property="twitter:title" content="反转链表——递归，链表 | 刘志豪的QQ空间"><meta property="twitter:description" content="这道题有递归和迭代两种不同的思路，考验了链表操作和函数调用的特点。"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.rWhfsjWc.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <header> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap gap-y-2 justify-between"> <a href="/" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> 刘志豪的QQ空间 </div>  </a> <nav class="flex gap-1"> <a href="/blog" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  文章  </a> <span> / </span> <a href="/work" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  工作  </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  项目  </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2021-10-24T14:45:00.000Z"> Oct 24, 2021 </time> </div>
+&bull;
+<div class="font-base text-sm"> 2 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> 反转链表——递归，链表 </div> </div> <article class="animate"> <h2 id="题目">题目：</h2>
+<p>给你单链表的头节点 <code>head</code> ，请你反转链表，并返回反转后的链表。</p>
+<h3 id="示例">示例：</h3>
+<p>示例一：</p>
+<p><img src="https://bl3301files.storage.live.com/y4mKX4kXheMf85DBRQMRmE2TTtt-ILOP_17kH_k4Pe-mVQF6tY55-LR8ADzMI5tO37cWlybtee2osjjjT0L15iKSLJJhKjlv429giAQBAyDNlU-3yZJg3Wd8bCwHa1bUn06IMk_FhUeH0u2Y8IZtKtVUVZyitbzZVqcx4xhMScvjBC0fDH1hvQvr3kYSPBX7mD7?width=542&#x26;height=222&#x26;cropmode=none" alt="示例一图片"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：head = [1,2,3,4,5]</span></span>
+<span class="line"><span>输出：[5,4,3,2,1]</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>示例二：</p>
+<p><img src="https://bl3301files.storage.live.com/y4mfLrTOAFTCFJvS72c8dwEs052DxT7UkUuIAJxXEFsCoFchG3e8Gq8TlChxvyuxyQYuUWy4NBZ0VPViEb2v988MWJwG9qfqXi8TL-3KJ4IuE3AwGRwqQX5SWSi2s45Ahupog_x7MjkIZIhc8wQLex-_SrXVUMtfM3i9AbFfXz4oP0NW4vIJCYC-DXnUBTuUN3m?width=182&#x26;height=222&#x26;cropmode=none" alt="示例二图片"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：head = [1,2]</span></span>
+<span class="line"><span>输出：[2,1]</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>示例三：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：head = []</span></span>
+<span class="line"><span>输出：[]</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="提示">提示：</h3>
+<p>链表中节点的数目范围是 [0, 5000]</p>
+<p>-5000 &#x3C;= Node.val &#x3C;= 5000</p>
+<h3 id="进阶">进阶：</h3>
+<p>链表可以选用迭代或递归方式完成反转。你能否用两种方法解决这道题？</p>
+<h2 id="思路">思路</h2>
+<p>这道题的关键就是如何处理节点的 next 指针。</p>
+<p>该问题是一个关于链表问题，先要将完整的问题拆分成子问题，自然想到以链表的节点作为子问题的单元。我们聚焦到链表中的单个节点，发现只要将每个节点的 next 指针指向前一个节点就可以实现链表的反转了。所以处理每一个节点时，需要用到该节点的<strong>前一个节点</strong>。</p>
+<h3 id="迭代实现">迭代实现</h3>
+<p>迭代的思路比较常规，保存两个指针，一个 <code>cur</code> 指针指向当前遍历的节点，一个 <code>prev</code> 指针指向当前遍历的节点的前一个节点，对链表遍历一遍，将每个节点的 next 指针指向 <code>prev</code>。</p>
+<h3 id="递归实现">递归实现</h3>
+<p>递归的思路通常不会第一时间被想到，注意这个方法存在调用栈超过最大限制的风险。思路就是利用函数调用栈先进后出的结构特点，函数调用时栈帧压入栈的顺序，与函数返回时栈帧弹出栈的顺序正好相反。所以如果按照原来的顺序对每个节点依次调用递归函数，那么在函数的返回阶段，相当于按照相反的顺序访问链表，这样每个函数中，递归调用的返回值就正好是当前节点的上一个节点。这样相当于隐式保存了当前节点和上一个节点，但是这样在调用时会在调用栈保存链表中的所有节点，所以内存占用会比较大。</p>
+<h2 id="注意">注意</h2>
+<ul>
+<li>递归实现中，注意要保存递归调用阶段的最后一个节点，这个节点是反转后的链表的首节点，也是该问题的返回值。</li>
+<li>反转前的第一个节点，反转过后，这个节点就变成了最后一个节点，所以需要将这个节点的 next 赋值为 null，否则链表遍历一轮之后链表中会出现环，导致无法跳出循环或者递归过程。</li>
+</ul>
+<h2 id="代码">代码</h2>
+<p>公共部分</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Definition for singly-linked list.</span></span>
+<span class="line"><span style="color:#6A737D"> * class ListNode {</span></span>
+<span class="line"><span style="color:#6A737D"> *     val: number</span></span>
+<span class="line"><span style="color:#6A737D"> *     next: ListNode | null</span></span>
+<span class="line"><span style="color:#6A737D"> *     constructor(val?: number, next?: ListNode | null) {</span></span>
+<span class="line"><span style="color:#6A737D"> *         this.val = (val===undefined ? 0 : val)</span></span>
+<span class="line"><span style="color:#6A737D"> *         this.next = (next===undefined ? null : next)</span></span>
+<span class="line"><span style="color:#6A737D"> *     }</span></span>
+<span class="line"><span style="color:#6A737D"> * }</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"></span></code></pre>
+<p>迭代实现</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> reverseList</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">head</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">head </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> head.next </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> head;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> [prev, cur] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [head, head.next];</span></span>
+<span class="line"><span style="color:#E1E4E8">    head.next </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#E1E4E8">(cur){</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> next</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> cur.next;</span></span>
+<span class="line"><span style="color:#E1E4E8">        cur.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> prev;</span></span>
+<span class="line"><span style="color:#E1E4E8">        prev </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cur;</span></span>
+<span class="line"><span style="color:#E1E4E8">        cur </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> next;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> prev;</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span></code></pre>
+<p>递归实现</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> reverseList</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">head</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">head) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> head;</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> newHead </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> head;</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> reverseListCore</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">head</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ListNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (head.next </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">            const</span><span style="color:#79B8FF"> reversedListTail</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> reverseListCore</span><span style="color:#E1E4E8">(head.next);</span></span>
+<span class="line"><span style="color:#E1E4E8">            reversedListTail.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> head;</span></span>
+<span class="line"><span style="color:#E1E4E8">        } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            newHead </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> head; </span><span style="color:#6A737D">// 保存最后一个节点作为反转后链表的第一个节点</span></span>
+<span class="line"><span style="color:#E1E4E8">        } </span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> head;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#B392F0">    reverseListCore</span><span style="color:#E1E4E8">(head);</span></span>
+<span class="line"><span style="color:#E1E4E8">    head.next </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 防止出现环</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> newHead;</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span></code></pre>
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/reverse-linked-list/">206. 反转链表 - 力扣（LeetCode） (leetcode-cn.com)</a></li>
+</ul> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+返回顶部
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | 刘志豪的QQ空间 </div> <div class="flex flex-wrap gap-1 items-center"> <button id="light-theme-button" aria-label="Light theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group size-8 flex items-center justify-center rounded-full"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div>  </div> </footer> </body></html>
